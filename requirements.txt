@@ -4,3 +4,11 @@ langchain
 openai
 faiss-cpu
 python-multipart
+sqlalchemy
+pydantic
+aiofiles
+# PDF Parsing
+PyMuPDF
+
+# DOCX Parsing
+python-docx
