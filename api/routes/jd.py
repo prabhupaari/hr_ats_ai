@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.schemas import JDCreate, JDOut
-from app.models import JobDescription
-from app.database import get_db
+from api.schemas import JDCreate, JDOut
+from api.models import JobDescription
+from api.database import get_db
 
 router = APIRouter()
 

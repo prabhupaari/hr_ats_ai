@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 import uvicorn
 
-from app.database import Base, engine
-from app.routes import jd, resume
+from api.database import Base, engine
+from api.routes import jd, resume
 
 Base.metadata.create_all(bind=engine)
 
@@ -13,4 +13,4 @@ app.include_router(resume.router, prefix="/resume", tags=["Resumes"])
 
 
 if __name__ == "__main__":
-    uvicorn.run("app:main", host="localhost", port=8000, reload=True)
+    uvicorn.run("main:app", host="localhost", port=8000, reload=True)
