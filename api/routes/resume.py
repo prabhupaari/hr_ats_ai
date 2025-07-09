@@ -16,7 +16,7 @@ async def upload_resume(file: UploadFile = File(...), background_tasks: Backgrou
     db.add(resume)
     db.commit()
     db.refresh(resume)
-    background_tasks.add_task(parse_and_save_resume, resume.id)
+    #background_tasks.add_task(parse_and_save_resume, resume.id)
 
     return {
         "filename": resume.filename,
