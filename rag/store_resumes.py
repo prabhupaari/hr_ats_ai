@@ -16,48 +16,23 @@ def flatten_dict(data: dict, parent_key='', sep='.') -> dict:
             items.append((new_key, str(v)))
     return dict(items)
 
-def index_resumes_to_faiss():
-    db = SessionLocal()
-    resumes = db.query(Resume).filter(Resume.is_parsed == True).all()
-
+def index_resumes_to_faiss(parsed_data):
     docs = []
-    for r in resumes:
-        if r.parsed and r.parsed.parsed_data:
-            try:
-                parsed_json = json.loads(r.parsed.parsed_data)
-                if isinstance(parsed_json, str):
-                    parsed_json = json.loads(parsed_json)
-                print(parsed_json)
-                flattened = flatten_dict(parsed_json)
-                print(flattened)
-                content = "\n".join(f"{k}: {v}" for k, v in flattened.items())
-                doc = Document(
-                    page_content=content,
-                    metadata={"type": "resume", "id": r.id, "filename": r.filename}
-                )
-                docs.append(doc)
-            except Exception as e:
-                print(f"❌ Failed to parse resume ID {r.id}: {e}")
+    try:
+        parsed_json = json.loads(parsed_data)
+        if isinstance(parsed_json, str):
+            parsed_json = json.loads(parsed_json)
+        print(parsed_json)
+        flattened = flatten_dict(parsed_json)
+        print(flattened)
+        content = "\n".join(f"{k}: {v}" for k, v in flattened.items())
+        doc = Document(
+            page_content=content,
+            metadata={"type": "resume", "id": r.id, "filename": r.filename}
+        )
+        docs.append(doc)
+    except Exception as e:
+        print(f"❌ Failed to parse resume ID {r.id}: {e}")
 
     save_documents_to_vectorstore(docs)
     print(f"✅ Indexed {len(docs)} parsed resumes into vector DB")
-    db.close()
-
-
-# def index_jds_to_faiss():
-#     db = SessionLocal()
-#     jds = db.query(JD).all()
-
-#     docs = []
-#     for jd in jds:
-#         docs.append(Document(
-#             page_content=jd.description,
-#             metadata={"type": "jd", "id": jd.id, "title": jd.title}
-#         ))
-
-#     save_documents_to_vectorstore(docs)
-#     print(f"✅ Indexed {len(docs)} JDs into vector DB")
-#     db.close()
-
-# index_resumes_to_faiss()
-# index_jds_to_faiss()

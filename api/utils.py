@@ -6,6 +6,7 @@ from fastapi import UploadFile
 from docx import Document
 from api.database import get_db
 from api.models import Resume, ParsedResume
+from rag.store_resumes import index_resumes_to_faiss
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -77,6 +78,7 @@ def parse_and_save_resume(resume_id: int):
             db.add(parsed_resume)
             resume.is_parsed = True
             db.commit()
+            index_resumes_to_faiss()
     except Exception as e:
         print(f"Error parsing resume {resume_id}: {e}")
     finally:
