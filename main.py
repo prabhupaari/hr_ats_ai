@@ -14,21 +14,7 @@ app.include_router(jd.router, prefix="/jd", tags=["Job Descriptions"])
 app.include_router(resume.router, prefix="/resume", tags=["Resumes"])
 
 
-
-
-@app.post("/match_resumes/{jd_id}")
-def match_resumes(jd_id: int):
-    try:
-        results = match_resumes_with_summary(jd_id)
-        return {"matches": results}
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="Something went wrong")
-
-
-@app.get("/process_resume/{jd_id}")
+@app.get("/match/{jd_id}")
 async def process_resume(jd_id: int, k: int = 3):
     jd_text = get_jd_text(jd_id)
     if not jd_text:

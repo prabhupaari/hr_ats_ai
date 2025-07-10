@@ -16,7 +16,7 @@ def flatten_dict(data: dict, parent_key='', sep='.') -> dict:
             items.append((new_key, str(v)))
     return dict(items)
 
-def index_resumes_to_faiss(parsed_data):
+def index_resumes_to_faiss(parsed_data, resume):
     docs = []
     try:
         parsed_json = json.loads(parsed_data)
@@ -28,11 +28,11 @@ def index_resumes_to_faiss(parsed_data):
         content = "\n".join(f"{k}: {v}" for k, v in flattened.items())
         doc = Document(
             page_content=content,
-            metadata={"type": "resume", "id": r.id, "filename": r.filename}
+            metadata={"type": "resume", "id": resume.id, "filename": resume.filename}
         )
         docs.append(doc)
     except Exception as e:
-        print(f"❌ Failed to parse resume ID {r.id}: {e}")
+        print(f"❌ Failed to parse resume ID {resume.id}: {e}")
 
     save_documents_to_vectorstore(docs)
     print(f"✅ Indexed {len(docs)} parsed resumes into vector DB")

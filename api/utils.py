@@ -1,7 +1,7 @@
 import os
 import json
 import fitz
-import openai
+from openai import OpenAI
 from fastapi import UploadFile
 from docx import Document
 from api.database import get_db
@@ -10,7 +10,7 @@ from rag.store_resumes import index_resumes_to_faiss
 from dotenv import load_dotenv
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 UPLOAD_DIR = os.path.abspath(os.path.join(
@@ -57,7 +57,7 @@ def parse_resume_with_gpt(resume_text: str):
         {resume_text}
         \"\"\"
     """
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.2
@@ -78,7 +78,8 @@ def parse_and_save_resume(resume_id: int):
             db.add(parsed_resume)
             resume.is_parsed = True
             db.commit()
-            index_resumes_to_faiss()
+            # store resume to vector store
+            index_resumes_to_faiss(parsed_data, resume)
     except Exception as e:
         print(f"Error parsing resume {resume_id}: {e}")
     finally:

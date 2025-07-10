@@ -1,6 +1,5 @@
 import os
-import faiss
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain.docstore.document import Document
 from rag.embedder import get_openai_embedder
 
