@@ -34,6 +34,12 @@ Summary:"""
     llm = OpenAI(temperature=0)
     return LLMChain(prompt=prompt, llm=llm)
 
+def get_jd_text(jd_id: int):
+    db = SessionLocal()
+    jd = db.query(JobDescription).filter(JobDescription.id == jd_id).first()
+    if not jd:
+        raise ValueError("JD not found")
+    return jd.description
 
 def match_resumes_with_summary(jd_id: int, k=3):
     db = SessionLocal()
